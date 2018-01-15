@@ -1,0 +1,6 @@
+*.py[cod]
+*.sqlite3
+__pycache__
+.idea
+*.log
+.venv
