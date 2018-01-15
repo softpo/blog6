@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>MyBlog</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="/static/css/style.css">
+</head>
+
+<body>
+	<div class="container">
+		<h1><a href="/post/home/">MyBlog</a></h1>
+
+		<form method="POST" action="/post/search/" style="text-align: right;">
+			{% csrf_token %}
+			<input type="text" name="keyword">
+			<input type="submit" name="搜索">
+			<a href="/post/create/">新建文章</a>
+		</form>
+
+		<hr>
+
+		<div class="content">{%block content %}{%endblock%}</div>
+	</div>
+	<div class="footer">当前访问人数：1</div>
+</body>
+
+</html>

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+	{% for a in articles %}
+	<div class="index">
+		<span class="date">{{ a.date }}</span>
+		<a href="/post/article/?aid={{a.id}}">{{a.title}}</a>
+	</div>
+	{% endfor %}
+
+	{% for page in pages %}
+	<a href="/post/home/?page={{forloop.counter}}">{{ forloop.counter }}</a>
+	{% endfor %}
+
+	<hr>
+	<div>最热文章</div>
+	{% for a, n in top10 %}
+	<div class="index">
+		<span class="date">{{ a.date }}</span>
+		<a href="/post/show/?aid={{a.id}}">{{a.title}}</a>
+		<span class="date" style="float: right;">访问数: {{n}}</span>
+	</div>
+	{% endfor %}
+	<hr>
+
+
+{% endblock %}
