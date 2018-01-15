@@ -57,5 +57,7 @@ def comment(request):
 
 
 def search(request):
-    data = {}
-    return render(request, '*.html', data)
+    if request.method == 'POST':
+        keyword = request.POST.get('keyword')
+        articles = Article.objects.filter(content__contains=keyword)
+        return render(request, 'home.html', {'articles': articles})
