@@ -1,4 +1,5 @@
 # coding: utf-8
+from math import ceil
 
 from django.shortcuts import render, redirect
 
@@ -6,8 +7,21 @@ from post.models import Article, Comment
 
 
 def home(request):
-    articles = Article.objects.all()
-    return render(request, 'home.html', {'articles': articles})
+    # 计算总页数
+    count = Article.objects.count()
+    pages = ceil(count / 5)
+
+    # 获取当前页数
+    page = int(request.GET.get('page', 1))
+    page = 0 if page < 1 or page >= (pages + 1) else (page - 1)
+
+    # 取出当前页面的文章
+    start = page * 5
+    end = start + 5
+    articles = Article.objects.all()[start:end]
+
+    return render(request, 'home.html',
+                  {'articles': articles, 'page': page, 'pages': range(pages)})
 
 
 def article(request):
