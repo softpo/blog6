@@ -2,10 +2,13 @@
 from math import ceil
 
 from django.shortcuts import render, redirect
+from django.core.cache import cache
 
+from post.helper import page_cache
 from post.models import Article, Comment
 
 
+@page_cache(3)
 def home(request):
     # 计算总页数
     count = Article.objects.count()
@@ -24,6 +27,7 @@ def home(request):
                   {'articles': articles, 'page': page, 'pages': range(pages)})
 
 
+@page_cache(5)
 def article(request):
     aid = int(request.GET.get('aid', 1))
     article = Article.objects.get(id=aid)
@@ -60,7 +64,6 @@ def editor(request):
 
 def comment(request):
     if request.method == 'POST':
-        form = CommentForm(request.POST)
         name = request.POST.get('name')
         content = request.POST.get('content')
         aid = int(request.POST.get('aid'))
