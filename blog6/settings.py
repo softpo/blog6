@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'post',
+    'user',
 ]
 
 MIDDLEWARE = [
@@ -45,9 +46,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'user.middleware.AuthenticationMiddleware',
 ]
 
 ROOT_URLCONF = 'blog6.urls'
@@ -55,7 +54,10 @@ ROOT_URLCONF = 'blog6.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['post/templates'],
+        'DIRS': [
+            'post/templates',
+            'user/templates',
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -63,6 +65,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
             ],
         },
     },
@@ -132,4 +135,9 @@ CACHES = {
         }
     }
 }
+
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+
+
+MEDIA_ROOT = 'medias'
+MEDIA_URL = '/medias/'

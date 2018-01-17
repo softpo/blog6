@@ -2,16 +2,18 @@
 
 {%block content %}
 	<div class="container">
-		<h1 style="text-align: left;">{{article.title}}</h1>
+		<h2 style="text-align: left;">{{article.title}}</h2>
 		<span class="date">{{article.create}}</span>
-		<div style="float: right;">
-			<a href="/post/editor/?aid={{article.id}}">编辑</a>
-			<a href="/post/delete/?aid={{article.id}}">删除</a>
-		</div>
-		<hr>
 
 		<!-- 正文 -->
-		<div>{{article.content | linebreaks}}</div>
+		<div>
+			<div style="float: right;">
+				<a href="/post/editor/?aid={{article.id}}">编辑</a>
+				<a href="/post/delete/?aid={{article.id}}">删除</a>
+			</div>
+
+		{{article.content | linebreaks}}
+		</div>
 		<hr>
 
 		<!-- 评论 -->

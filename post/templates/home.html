@@ -9,13 +9,15 @@
 	</div>
 	{% endfor %}
 
+	<div class="index">
 	{% for page in pages %}
 	<a href="/post/home/?page={{forloop.counter}}">{{ forloop.counter }}</a>
 	{% endfor %}
+	</div>
 
 	<hr>
 	{% if top10 %}
-	<div>最热文章</div>
+	<div class="index">最热文章</div>
 	{% for a, n in top10 %}
 	<div class="index">
 		<span class="date">{{ a.date }}</span>
