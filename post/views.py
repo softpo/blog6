@@ -5,10 +5,12 @@ from django.shortcuts import render, redirect
 from django.core.cache import cache
 
 from post.helper import page_cache
+from post.helper import record_click
+from post.helper import get_top_n_articles
 from post.models import Article, Comment
 
 
-@page_cache(3)
+@page_cache(1)
 def home(request):
     # 计算总页数
     count = Article.objects.count()
@@ -23,8 +25,10 @@ def home(request):
     end = start + 5
     articles = Article.objects.all()[start:end]
 
+    # 取出 Top 10
+    top10 = get_top_n_articles(10)
     return render(request, 'home.html',
-                  {'articles': articles, 'page': page, 'pages': range(pages)})
+                  {'articles': articles, 'page': page, 'pages': range(pages), 'top10': top10})
 
 
 @page_cache(5)
@@ -32,6 +36,7 @@ def article(request):
     aid = int(request.GET.get('aid', 1))
     article = Article.objects.get(id=aid)
     comments = Comment.objects.filter(aid=aid)
+    record_click(aid)  # 记录文章点击
     return render(request, 'article.html', {'article': article, 'comments': comments})
 
 
