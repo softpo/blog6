@@ -1,11 +1,14 @@
 # coding: utf-8
 
+import logging
+
 from django.core.cache import cache
 from redis import Redis
 
 from post.models import Article
 
 rds = Redis(host='10.0.112.84', port=6379, db=9)
+logger = logging.getLogger('statistic')
 
 
 def page_cache(timeout):
@@ -68,3 +71,14 @@ def get_top_n_articles(number):
     #        [Article(9), 312],
     #    ]
     return article_clicks
+
+
+def statistic(view_func):
+    def wrap(request, *args, **kwargs):
+        response = view_func(request, *args, **kwargs)
+        if response.status_code == 200:
+            ip = request.META['REMOTE_ADDR']
+            aid = request.GET.get('aid')
+            logger.info('%s %s' % (ip, aid))
+        return response
+    return wrap

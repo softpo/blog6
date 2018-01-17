@@ -7,6 +7,7 @@ from django.core.cache import cache
 from post.helper import page_cache
 from post.helper import record_click
 from post.helper import get_top_n_articles
+from post.helper import statistic
 from post.models import Article, Comment
 
 
@@ -31,6 +32,7 @@ def home(request):
                   {'articles': articles, 'page': page, 'pages': range(pages), 'top10': top10})
 
 
+@statistic
 @page_cache(5)
 def article(request):
     aid = int(request.GET.get('aid', 1))

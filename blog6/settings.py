@@ -141,3 +141,33 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 
 MEDIA_ROOT = 'medias'
 MEDIA_URL = '/medias/'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'detail': {
+            'format': '%(asctime)s %(levelname)s %(module)s: %(message)s'
+        },
+        'simple': {
+            'format': '%(message)s'
+        },
+    },
+
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': f'{BASE_DIR}/blog6.log',
+            'formatter': 'detail',
+        },
+    },
+
+    'loggers': {
+        'statistic': {
+            'handlers': ['file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}
