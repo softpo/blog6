@@ -4,7 +4,7 @@ import time
 
 from django.utils.deprecation import MiddlewareMixin
 
-MAX_REQUEST_PER_SECOND = 2  # 每秒最大请求次数
+MAX_REQUEST_PER_SECOND = 20  # 每秒最大请求次数
 
 # 可保存的位置
 # ------------

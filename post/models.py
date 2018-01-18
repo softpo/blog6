@@ -7,15 +7,39 @@ class Article(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     content = models.TextField()
 
-    @classmethod
-    def update_article_tags(self, tags):
-        pass
-
-    # @cached_property
+    @property
     def tags(self):
         article_tags = ArticleTags.objects.filter(aid=self.id).only('tid')
         tid_list = [at.tid for at in article_tags]
-        return Tag.objects.in_bulk(tid_list)
+        return Tag.objects.filter(id__in=tid_list)
+
+    def update_article_tags(self, tag_names):
+        old_tag_names = set(tag.name for tag in self.tags)
+        new_tag_names = set(tag_names) - old_tag_names
+        need_delete = old_tag_names - set(tag_names)
+
+        # 创建新的关系
+        Tag.create_new_tags(new_tag_names, self.id)
+        # 删除旧关系
+        need_delete_tids = [t.id for t in Tag.objects.filter(name__in=need_delete).only('id')]
+        articletags = ArticleTags.objects.filter(tid__in=need_delete_tids)
+        for atag in articletags:
+            atag.delete()
+
+        # 取出需要删除的关系的 tid
+        # need_delete = []
+        # for tag in self.tags:
+        #     if tag.name not in tag_names:
+        #         need_delete.append(tag.id)
+        #     else:
+        #         tag_names.remove(tag.name)  # 需要保留的, 剔除掉了
+        # 删除旧的关系
+        # articletags = ArticleTags.objects.filter(tid__in=need_delete)
+        # for atag in articletags:
+        #     atag.delete()
+
+        # 创建新的 Tag 和 关系
+        # Tag.create_new_tags(tag_names, self.id)
 
 
 class Comment(models.Model):
@@ -38,16 +62,15 @@ class Tag(models.Model):
         cls.objects.bulk_create(new_tags)                                 # 批量创建
 
         # 建立与 Article 的关系
-        tags = cls.objects.in_bulk(tag_names, field_name='name')
+        tags = cls.objects.filter(name__in=tag_names)
         for t in tags:
-            articletag = ArticleTags(aid=aid, tid=t.id)
-            articletag.update_or_create()
+            ArticleTags.objects.update_or_create(aid=aid, tid=t.id)
         return tags
 
     @cached_property
     def articles(self):
         aid_list = [at.aid for at in ArticleTags.objects.filter(tid=self.id).only('aid')]
-        return Article.objects.in_bulk(aid_list)
+        return Article.objects.filter(id__in=aid_list)
 
 
 class ArticleTags(models.Model):

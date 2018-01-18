@@ -8,6 +8,7 @@ from post.helper import page_cache
 from post.helper import record_click
 from post.helper import get_top_n_articles
 from post.helper import statistic
+from user.helper import permit
 from post.models import Article, Comment, Tag
 
 
@@ -39,9 +40,11 @@ def article(request):
     article = Article.objects.get(id=aid)
     comments = Comment.objects.filter(aid=aid)
     record_click(aid)  # 记录文章点击
-    return render(request, 'article.html', {'article': article, 'comments': comments})
+    return render(request, 'article.html',
+                  {'article': article, 'comments': comments, 'tags': article.tags})
 
 
+@permit('admin')
 def create(request):
     if request.method == 'POST':
         # 创建文章
@@ -60,6 +63,7 @@ def create(request):
         return render(request, 'create.html')
 
 
+@permit('admin')
 def editor(request):
     if request.method == 'POST':
         title = request.POST.get('title')
@@ -71,11 +75,11 @@ def editor(request):
         article.content = content
         article.save()
 
-        # 创建或更新
+        # 创建 或更新 或删除
         tags = request.POST.get('tags', '')
         if tags:
-            tags = [t.strip() for t in tags.split(',')]
-            Tag.update_article_tags(tags)
+            tag_names = [t.strip() for t in tags.split(',')]
+            article.update_article_tags(tag_names)
 
         return redirect('/post/article/?aid=%s' % article.id)
     else:
@@ -84,6 +88,7 @@ def editor(request):
         return render(request, 'editor.html', {'article': article})
 
 
+@permit('user')
 def comment(request):
     if request.method == 'POST':
         name = request.POST.get('name')

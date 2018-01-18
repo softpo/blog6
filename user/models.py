@@ -10,8 +10,18 @@ class User(models.Model):
     head = models.ImageField()
     age = models.IntegerField()
     sex = models.IntegerField()
+    pid = models.IntegerField(default=1)  # 权限 ID
 
     def save(self):
         if not self.password.startswith('pbkdf2_'):
             self.password = make_password(self.password)
         super().save()
+
+    @property
+    def permission(self):
+        return Permission.objects.get(self.pid)
+
+
+class Permission(models.Model):
+    perm = models.IntegerField()
+    name = models.CharField(max_length=64, unique=True)
