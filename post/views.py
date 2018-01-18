@@ -8,7 +8,7 @@ from post.helper import page_cache
 from post.helper import record_click
 from post.helper import get_top_n_articles
 from post.helper import statistic
-from post.models import Article, Comment
+from post.models import Article, Comment, Tag
 
 
 @page_cache(1)
@@ -44,9 +44,17 @@ def article(request):
 
 def create(request):
     if request.method == 'POST':
-        title = request.POST.get('title', '')
-        content = request.POST.get('content', '')
+        # 创建文章
+        title = request.POST.get('title')
+        content = request.POST.get('content')
         article = Article.objects.create(title=title, content=content)
+
+        # 创建 Tags
+        tags = request.POST.get('tags', '')
+        if tags:
+            tags = [t.strip() for t in tags.split(',')]
+            Tag.create_new_tags(tags, article.id)
+
         return redirect('/post/article/?aid=%s' % article.id)
     else:
         return render(request, 'create.html')
@@ -62,6 +70,13 @@ def editor(request):
         article.title = title
         article.content = content
         article.save()
+
+        # 创建或更新
+        tags = request.POST.get('tags', '')
+        if tags:
+            tags = [t.strip() for t in tags.split(',')]
+            Tag.update_article_tags(tags)
+
         return redirect('/post/article/?aid=%s' % article.id)
     else:
         aid = int(request.GET.get('aid', 0))
