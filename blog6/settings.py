@@ -46,6 +46,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'common.middleware.RequestBlockingMiddleware',
     'user.middleware.AuthenticationMiddleware',
 ]
 
