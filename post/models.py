@@ -29,18 +29,19 @@ class Tag(models.Model):
     name = models.CharField(max_length=32, unique=True, blank=False, null=False)
 
     @classmethod
-    def create_new_tags(cls, tags, aid):
+    def create_new_tags(cls, tag_names, aid):
         # 创建 Tags
-        exist_tags = cls.objects.filter(name__in=tags).only('name')  # 取出已存在的 tags
-        exists = [t.name for t in exist_tags]                        # 取出这些 tags 的 name
-        tags = set(tags) - set(exists)                               # 去除已存在的 tags
-        tags = [Tag(name=n) for n in tags]                           # 生成带创建的 Tag 对象列表
-        cls.objects.bulk_create(tags)                                # 批量创建
+        exist_tags = cls.objects.filter(name__in=tag_names).only('name')  # 取出已存在的 tags
+        exists = [t.name for t in exist_tags]                             # 取出这些 tags 的 name
+        new_tags = set(tag_names) - set(exists)                           # 去除已存在的 tags
+        new_tags = [cls(name=n) for n in new_tags]                        # 生成带创建的 Tag 对象列表
+        cls.objects.bulk_create(new_tags)                                 # 批量创建
 
         # 建立与 Article 的关系
-        tags = cls.objects.in_bulk(tags, field_name='name')
-        at_list = [ArticleTags(aid=aid, tid=t.id) for t in tags]
-        ArticleTags.objects.bulk_create(at_list)
+        tags = cls.objects.in_bulk(tag_names, field_name='name')
+        for t in tags:
+            articletag = ArticleTags(aid=aid, tid=t.id)
+            articletag.update_or_create()
         return tags
 
     @cached_property
