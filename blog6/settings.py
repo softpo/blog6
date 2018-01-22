@@ -46,7 +46,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'common.middleware.RequestBlockingMiddleware',
+    # 'common.middleware.RequestBlockingMiddleware',
     'user.middleware.AuthenticationMiddleware',
 ]
 
@@ -129,7 +129,7 @@ STATIC_URL = '/static/'
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://10.0.112.84:6379/6",
+        "LOCATION": "redis://127.0.0.1:6379/10",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "PICKLE_VERSION": -1,
@@ -139,6 +139,11 @@ CACHES = {
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 
+REDIS = {
+    'host': '127.0.0.1',
+    'port': 6379,
+    'db': 10
+}
 
 MEDIA_ROOT = 'medias'
 MEDIA_URL = '/medias/'

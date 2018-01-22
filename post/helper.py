@@ -2,12 +2,13 @@
 
 import logging
 
-from django.core.cache import cache
 from redis import Redis
+from django.core.cache import cache
+from django.conf import settings
 
 from post.models import Article
 
-rds = Redis(host='10.0.112.84', port=6379, db=9)
+rds = Redis(**settings.REDIS)
 logger = logging.getLogger('statistic')
 
 
